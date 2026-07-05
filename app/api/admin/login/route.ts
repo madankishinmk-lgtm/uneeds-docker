@@ -1,60 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import {
-  clearAdminSession,
-  createAdminSession,
-  getAdminPassword,
-  setAdminSessionCookie,
-} from '@/lib/auth';
-import { HttpError, jsonError } from '@/lib/errors';
-
-const loginSchema = z.object({
-  password: z.string().trim().min(1).max(200),
-});
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json().catch(() => null);
+  const body = await request.json().catch(() => ({}));
 
-    const parsed = loginSchema.safeParse(body);
-
-    if (!parsed.success) {
-      throw new HttpError(400, 'Invalid password payload');
-    }
-
-    const adminPassword = getAdminPassword();
-
-    // DEBUG
-    console.log('==============================');
-    console.log('ADMIN_PASSWORD:', adminPassword);
-    console.log('INPUT_PASSWORD:', parsed.data.password);
-    console.log(
-      'MATCH:',
-      adminPassword === parsed.data.password
-    );
-    console.log('==============================');
-
-    if (!adminPassword || parsed.data.password !== adminPassword) {
-      throw new HttpError(401, 'Invalid password');
-    }
-
-    const token = await createAdminSession();
-
-    if (!token) {
-      throw new HttpError(500, 'Authentication unavailable');
-    }
-
-    await setAdminSessionCookie(token);
-
-    return NextResponse.json({
-      ok: true,
-    });
-  } catch (error) {
-    await clearAdminSession();
-    return jsonError(error, 'Login failed');
-  }
+  return NextResponse.json({
+    envExists: !!process.env.ADMIN_PASSWORD,
+    envLength: process.env.ADMIN_PASSWORD?.length ?? 0,
+    input: body.password ?? null,
+    match: body.password === process.env.ADMIN_PASSWORD,
+  });
 }
-
 export async function DELETE() {
   await clearAdminSession();
   return NextResponse.json({
