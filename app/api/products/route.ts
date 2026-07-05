@@ -10,7 +10,6 @@ const productPayloadSchema = z.object({
     name: z.string().trim().min(2).max(120),
     price: z.number().nonnegative(),
     image_url: z.string().trim().max(500).nullable().optional(),
-    image_url: z.string().trim().max(500).nullable().optional(),
     stock: z.number().int().nonnegative().optional(),
     description: z.string().trim().max(1000).nullable().optional(),
   }),
