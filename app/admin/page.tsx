@@ -323,7 +323,15 @@ export default function AdminPage() {
                   {uploadingImage ? 'Uploading...' : (productForm.image_url ? 'Replace image' : 'Upload image')}
                   <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleImageUpload} />
                 </label>
-                {productForm.image_url ? <img src={getStoragePublicUrl(productForm.image_url) || undefined} alt="Preview" className="h-32 w-full rounded-2xl object-cover" /> : null}
+                {productForm.image_url ? (
+                  <div className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-md">
+                    <img
+                      src={getStoragePublicUrl(productForm.image_url) || undefined}
+                      alt="Preview"
+                      className="h-80 w-full object-cover object-center transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                ) : null}
                 <textarea value={productForm.description} onChange={(e) => setProductForm({ ...productForm, description: e.target.value })} placeholder="Description" className="min-h-24 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none" />
                 <button className="w-full rounded-full bg-[var(--primary)] px-4 py-3 font-semibold text-white">Save Product</button>
               </form>
