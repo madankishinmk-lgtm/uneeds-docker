@@ -171,11 +171,11 @@ export default function OrderPage() {
                                         animate={{ opacity: 1, y: 0 }}
                                         className="overflow-hidden rounded-[28px] border border-white/70 bg-white/90 shadow-[0_20px_60px_rgba(30,30,30,0.07)]"
                                     >
-                                        <div className="h-56 overflow-hidden bg-gradient-to-br from-[var(--primary)]/10 to-[var(--secondary)]/20 p-2">
+                                        <div className="h-56 overflow-hidden">
                                             <img
                                                 src={getStoragePublicUrl(product.image_url) || undefined}
                                                 alt={product.name}
-                                                className="h-full w-full rounded-[22px] object-cover object-center"
+                                                className="h-full w-full object-cover"
                                             />
                                         </div>
                                         <div className="space-y-4 p-5">
