@@ -165,13 +165,18 @@ export default function OrderPage() {
                         ) : (
                             <div className="grid gap-5 md:grid-cols-2">
                                 {filteredProducts.map((product) => (
-                                    <motion.article key={product.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="overflow-hidden rounded-[28px] border border-white/70 bg-white/90 shadow-[0_20px_60px_rgba(30,30,30,0.07)]">
-                                        <div className="h-40 bg-gradient-to-br from-[var(--primary)]/10 to-[var(--secondary)]/20 p-4">
-                                            {product.image_url ? (
-                                                <img src={getStoragePublicUrl(product.image_url) || undefined} alt={product.name} className="h-full w-full rounded-[22px] object-cover" />
-                                            ) : (
-                                                <div className="flex h-full items-center justify-center rounded-[22px] border border-dashed border-[var(--primary)]/20 bg-white/60 text-sm font-medium text-slate-500">Image coming soon</div>
-                                            )}
+                                    <motion.article
+                                        key={product.id}
+                                        initial={{ opacity: 0, y: 16 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="overflow-hidden rounded-[28px] border border-white/70 bg-white/90 shadow-[0_20px_60px_rgba(30,30,30,0.07)]"
+                                    >
+                                        <div className="h-56 overflow-hidden bg-gradient-to-br from-[var(--primary)]/10 to-[var(--secondary)]/20 p-2">
+                                            <img
+                                                src={getStoragePublicUrl(product.image_url) || undefined}
+                                                alt={product.name}
+                                                className="h-full w-full rounded-[22px] object-cover object-center"
+                                            />
                                         </div>
                                         <div className="space-y-4 p-5">
                                             <div className="flex items-start justify-between gap-3">
