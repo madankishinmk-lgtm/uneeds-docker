@@ -8,11 +8,6 @@ export async function requireAdminAuth() {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
 
-  console.log('========================');
-  console.log('COOKIE:', token);
-  console.log('ADMIN_PASSWORD EXISTS:', !!process.env.ADMIN_PASSWORD);
-  console.log('SECRET EXISTS:', !!process.env.ADMIN_SESSION_SECRET);
-  console.log('========================');
 
   if (!token) return false;
 
@@ -33,7 +28,6 @@ export async function requireAdminAuth() {
     provided.length !== expectedBuffer.length ||
     !timingSafeEqual(provided, expectedBuffer)
   ) {
-    console.log('Signature mismatch');
     return false;
   }
 
@@ -41,7 +35,6 @@ export async function requireAdminAuth() {
     Buffer.from(user, 'base64url').toString('utf8')
   );
 
-  console.log(payload);
 
   if (!payload.admin) return false;
   if (payload.exp < Date.now()) return false;
