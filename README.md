@@ -94,3 +94,95 @@ Create a Supabase Storage bucket named `payment-proofs` with public access.
 2. Import it into Vercel.
 3. Add the environment variables in Vercel.
 4. Deploy.
+
+
+@'
+
+## Run with Docker
+
+### Prerequisites
+- Docker Desktop installed and running.
+- A Supabase project with the required database tables and Storage bucket configured.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/madankishinmk-lgtm/uneeds-docker.git
+cd uneeds-docker
+```
+
+### 2. Configure environment variables
+
+Copy the example file:
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+Edit `.env.local` and fill in the required values:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `ADMIN_PASSWORD`
+- `ADMIN_SESSION_SECRET`
+
+Never commit `.env.local` or share secret values.
+
+### 3. Build the Docker image
+
+The public Supabase URL and anon key are required during the Next.js build. In PowerShell, run:
+
+```powershell
+$supabaseUrl = (Get-Content .env.local | Where-Object { $_ -match '^\s*NEXT_PUBLIC_SUPABASE_URL\s*=' } | Select-Object -First 1) -replace '^\s*NEXT_PUBLIC_SUPABASE_URL\s*=\s*', ''
+$supabaseAnonKey = (Get-Content .env.local | Where-Object { $_ -match '^\s*NEXT_PUBLIC_SUPABASE_ANON_KEY\s*=' } | Select-Object -First 1) -replace '^\s*NEXT_PUBLIC_SUPABASE_ANON_KEY\s*=\s*', ''
+
+$supabaseUrl = $supabaseUrl.Trim().Trim('"').Trim("'")
+$supabaseAnonKey = $supabaseAnonKey.Trim().Trim('"').Trim("'")
+
+if (!$supabaseUrl -or !$supabaseAnonKey) {
+    throw "Supabase URL or anon key is missing from .env.local"
+}
+
+docker build --build-arg "NEXT_PUBLIC_SUPABASE_URL=$supabaseUrl" --build-arg "NEXT_PUBLIC_SUPABASE_ANON_KEY=$supabaseAnonKey" -t uneeds:docker .
+```
+
+### 4. Run the container
+
+```powershell
+docker run -d --name uneeds-container -p 3000:3000 --env-file .env.local uneeds:docker
+```
+
+Open http://localhost:3000 in your browser.
+
+### 5. Verify the application
+
+Check the container status and logs:
+
+```powershell
+docker ps
+docker logs --tail 60 uneeds-container
+```
+
+Test the health endpoint:
+
+```powershell
+Invoke-WebRequest http://localhost:3000/api/health -UseBasicParsing
+```
+
+Verify that the storefront loads and that a test order appears in the admin dashboard.
+
+### 6. Stop and remove the container
+
+```powershell
+docker rm -f uneeds-container
+```
+
+The application uses Supabase for persistent data. Removing the Docker container does not remove data stored in Supabase.
+
+### Troubleshooting
+
+- If port 3000 is already in use, stop the conflicting process or use a different host port, such as `-p 3001:3000`.
+- If the application cannot connect to Supabase, verify the environment variables and Supabase configuration.
+- If the image build fails, review the Docker build output for the first failing step.
+'@ | Add-Content README.md
